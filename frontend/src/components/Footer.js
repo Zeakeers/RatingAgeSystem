@@ -3,7 +3,7 @@ import react from "react";
 const Footer = () => {
     return (
         <div className="bg-black p-4 text-center text-white">
-          <p>&copy; 2023 Rating Umur Game. All rights reserved.</p>
+          <p>&copy; 2025 Rating Umur Game. All rights reserved.</p>
           <p>
             Developed by <a href="#" className="text-white hover:text-white">Dimas Adi</a>
           </p>

@@ -89,7 +89,6 @@ const App = () => {
                         {step === 0 && !rating && (
                             <h1 className="text-6xl text-white text-2xl text-left font-bold ">Rating Umur Game</h1>
                         )}
-                        {/* Tombol kembali hanya muncul saat berada di pertanyaan */}
                         {step > 0 && step <= questions.length && (
                         <div className="absolute top-4 right-4 flex space-x-2">
                             {step > 1 && (

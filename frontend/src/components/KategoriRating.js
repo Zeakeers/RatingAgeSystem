@@ -18,30 +18,44 @@ const KategoriRating = () => {
     setCurrentIndex((prevIndex) => (prevIndex - 1 + cards.length) % cards.length);
   };
   return (
-    <div className="bg-yellow-500 mt-[90px] mb-10 w-full h-[400px] flex items-center p-10 relative">
-      {/* Teks di sebelah kiri */}
-      <div className="w-1/2 pr-5">
-        <p className="text-black text-3xl">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam eu
-          turpis molestie, dictum est a, mattis tellus. Sed dignissim, metus nec
-          fringilla accumsan, risus sem sollicitudin lacus, ut interdum tellus
-          elit sed risus. Maecenas eget condimentum velit, sit amet feugiat lectus.
-          Class aptent taciti sociosqu ad litora torquent per conubia.
-        </p>
-      </div>
-         {/* Kotak putih sejajar kiri-kanan dengan efek flip */}
-      <div className="w-1/2 flex flex-col items-end gap-5">
-        <div className="flex gap-5 overflow-hidden w-[500px]">
-          {cards.slice(currentIndex, currentIndex + 2).map((card, index) => (
-            <FlipCard key={index} imageUrl={card.imageUrl} text={card.text} />
-          ))}
+    <div className="relative mt-[90px] mb-10 w-full h-[500px] flex items-center p-10">
+        <div 
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: "url('/images/bg2.jpg')" }}
+        ></div>
+        <div className="absolute inset-0 bg-yellow-500 opacity-85"></div>
+
+        {/* Konten utama */}
+        <div className="relative flex w-full h-full items-center justify-between p-10">
+          {/* Teks di sebelah kiri */}
+          <div className="w-1/2 pr-5">
+            <p className="text-black text-bold text-3xl">
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam eu turpis
+              molestie, dictum est a, mattis tellus. Sed dignissim, metus nec fringilla
+              accumsan, risus sem sollicitudin lacus, ut interdum tellus elit sed risus.
+              Maecenas eget condimentum velit, sit amet feugiat lectusLorem ipsum dolor 
+              sit amet, consectetur adipiscing elit. Etiam eu turpismolestie, dictum est 
+              a, mattis tellus. Sed dignissim, metus nec fringillaaccumsan, risus sem 
+              sollicitudin lacus,ut interdum tellus elit sed risus.amet feugiat
+               
+            </p>
+          </div>
+
+          {/* Kotak putih sejajar kiri-kanan dengan efek flip */}
+          <div className="w-1/2 flex flex-col items-end gap-5 relative">
+            <div className="flex gap-5 overflow-hidden w-[500px]">
+              {cards.slice(currentIndex, currentIndex + 2).map((card, index) => (
+                <FlipCard key={index} imageUrl={card.imageUrl} text={card.text} />
+              ))}
+            </div>
+            <div className="flex gap-2">
+              <button onClick={prevSlide} className="w-8 h-8 bg-gray-400 rounded-full">◀</button>
+              <button onClick={nextSlide} className="w-8 h-8 bg-gray-400 rounded-full">▶</button>
+            </div>
+          </div>
         </div>
-        <div className="flex gap-2">
-          <button onClick={prevSlide} className="w-8 h-8 bg-gray-400 rounded-full">◀</button>
-          <button onClick={nextSlide} className="w-8 h-8 bg-gray-400 rounded-full">▶</button>
-        </div>
       </div>
-    </div>
+
   );
 };
 

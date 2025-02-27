@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect  } from "react";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Tentang from "./components/Tentang";
@@ -32,12 +32,29 @@ const ratingDescriptions = {
 
 const App = () => {
     const [gameName, setGameName] = useState("");
+    const [suggestions, setSuggestions] = useState([]);
     const [step, setStep] = useState(0);
     const [answers, setAnswers] = useState([]);
     const [rating, setRating] = useState(null);
     const [isPopUpOpen, setIsPopUpOpen] = useState(false);
     const [isConfirmPopupOpen, setIsConfirmPopupOpen] = useState(false);
     const [selectedOption, setSelectedOption] = useState("");
+
+    useEffect(() => {
+        if (gameName.length > 1) {
+            fetch(`http://127.0.0.1:5000/autocomplete?query=${gameName}`)
+                .then(res => res.json())
+                .then(data => setSuggestions(data.slice(0, 4)))
+                .catch(err => console.error("Error fetching autocomplete:", err));
+        } else {
+            setSuggestions([]);
+        }
+    }, [gameName]);
+
+    const handleSelectGame = (selectedGame) => {
+        setGameName(selectedGame);
+        setSuggestions([]);
+    };
 
     const checkGame = async () => {
         const response = await fetch("http://127.0.0.1:5000/check_game", {
@@ -122,6 +139,19 @@ const App = () => {
                             onChange={(e) => setGameName(e.target.value)} 
                             className="border border-gray-600 bg-gray-100 p-2 w-full mt-2 focus:bg-gray-200 focus:border-black rounded mt-1"
                             />
+                            {suggestions.length > 0 && (
+                                <ul className="border border-gray-600 bg-gray-100 w-full mt-2 focus:bg-gray-200 focus:border-black rounded text-left">
+                                    {suggestions.map((suggestion, index) => (
+                                        <li 
+                                            key={index} 
+                                            className="p-2 cursor-pointer hover:bg-gray-300"
+                                            onClick={() => handleSelectGame(suggestion)}
+                                        >
+                                            {suggestion}
+                                        </li>
+                                    ))}
+                                </ul>
+                            )}
                             <button 
                             onClick={checkGame} 
                             className="bg-blue-500 text-white px-4 py-2 rounded mt-4"

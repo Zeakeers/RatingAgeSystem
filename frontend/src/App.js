@@ -1,4 +1,5 @@
-import React, { useState, useEffect  } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import { useLocation } from "react-router-dom"; 
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Tentang from "./components/Tentang";
@@ -39,6 +40,12 @@ const App = () => {
     const [isPopUpOpen, setIsPopUpOpen] = useState(false);
     const [isConfirmPopupOpen, setIsConfirmPopupOpen] = useState(false);
     const [selectedOption, setSelectedOption] = useState("");
+    const [latestGames, setLatestGames] = useState([]);
+    const [easterEggActive, setEasterEggActive] = useState(false);
+    const homeRef = useRef(null);
+    const tentangRef = useRef(null);
+    const kontakRef = useRef(null);
+    const location = useLocation();
 
     useEffect(() => {
         if (gameName.length > 1) {
@@ -51,26 +58,46 @@ const App = () => {
         }
     }, [gameName]);
 
+    useEffect(() => {
+        fetch("http://127.0.0.1:5000/latest_games")
+            .then(res => res.json())
+            .then(data => setLatestGames(data.slice(-5)))
+            .catch(err => console.error("Error fetching latest games:", err));
+    }, []);
+
+    useEffect(() => {
+        if (location.hash) {
+            const section = location.hash.replace("#", "");
+            scrollToSection(section);
+        }
+    }, [location]);
+
     const handleSelectGame = (selectedGame) => {
         setGameName(selectedGame);
         setSuggestions([]);
     };
 
     const checkGame = async () => {
+        if (gameName.trim().toLowerCase() === "lulus 2025") {
+            setEasterEggActive(true);
+            setRating("🎉 BISMILLAH LULUS 2025 DENGAN SEDIKIT REVISI 🎓");
+            return;
+        }
+    
+        setEasterEggActive(false);
         const response = await fetch("http://127.0.0.1:5000/check_game", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ game_name: gameName }),
         });
         const data = await response.json();
-
+    
         if (data.exists) {
             setRating(data.rating);
         } else {
             setStep(1);
         }
-    };
-
+    };    
     const handleOptionClick = (option) => {
         setSelectedOption(option);
         setIsPopUpOpen(true);
@@ -97,10 +124,34 @@ const App = () => {
         setRating(data.rating);
     };
 
+    const fetchGameRating = async (game) => {
+        const response = await fetch("http://127.0.0.1:5000/check_game", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ game_name: game }),
+        });
+        const data = await response.json();
+    
+        if (data.exists) {
+            setGameName(game);
+            setRating(data.rating);
+            setStep(0);
+        }
+    };
+
+    const scrollToSection = (section) => {
+        if (section === "home") {
+            homeRef.current?.scrollIntoView({ behavior: "smooth" });
+        } else if (section === "tentang") {
+            tentangRef.current?.scrollIntoView({ behavior: "smooth" });
+        } else if (section === "kontak") {
+            kontakRef.current?.scrollIntoView({ behavior: "smooth" });
+        }
+    };
     return (
         <div>
-            <Header/>
-                <div className="h-screen w-full bg-cover bg-center bg-no-repeat bg-black bg-opacity-50 flex items-center justify-center" 
+            <Header scrollToSection={scrollToSection} />
+                <div id="home" ref={homeRef} className="h-screen w-full bg-cover bg-center bg-no-repeat bg-black bg-opacity-50 flex items-center justify-center" 
                         style={{ backgroundImage: "url('/images/bgwebrating.png')", backgroundSize: "105%" }}>
                     <div className={`w-full max-w-lg p-6 text-center relative ${step > 0 || rating ? 'bg-white rounded-lg shadow-md' : ''}`}>
                         {step === 0 && !rating && (
@@ -117,8 +168,7 @@ const App = () => {
                                 className="w-6 h-6 bg-yellow-500 rounded-full hover:bg-yellow-700"
                             />
                             )}
-
-                            {/* Tombol merah: Kembali ke input nama game */}
+                        
                             <button 
                             onClick={() => {
                                 setStep(0);
@@ -129,7 +179,6 @@ const App = () => {
                             />
                         </div>
                         )}
-
                         {!rating && step === 0 && (
                         <>
                             <p className="mt-4 text-left text-white">Masukkan nama game:</p>
@@ -158,9 +207,30 @@ const App = () => {
                             >
                             Cek
                             </button>
+                           {/* Daftar 5 game terbaru */}
+                           {latestGames.length > 0 && (
+                                <div className="mt-6 px-6 bg-yellowlight  p-2 rounded">
+                                    <h2 className="text-black text-bold text-lg text-left font-semibold mb-2">Game Terbaru:</h2>
+                                    <div className=" flex flex-wrap max-w-full gap-x-6 gap-y-2 ">
+                                        {latestGames.map((game, index) => (
+                                            <button 
+                                                key={index} 
+                                                className="text-black text-bold border-b border-gray-400 hover:text-white-300 cursor-pointer text-left whitespace-nowrap"
+                                                onClick={() => fetchGameRating(game)}
+                                            >
+                                                {game}
+                                            </button>
+                                        ))}
+                                        {latestGames.length >= 4 && (
+                                            <a href="/list-games" className="text-blue-800 hover:underline ml-2">
+                                                Selengkapnya
+                                            </a>
+                                        )}
+                                    </div>
+                                </div>
+                            )}
                         </>
                         )}
-
                         {!rating && step > 0 && step <= questions.length && (
                         <>
                             <p className="mt-4">{questions[step - 1]}</p>
@@ -175,7 +245,6 @@ const App = () => {
                             ))}
                         </>
                         )}
-
                         {!rating && step > questions.length && (
                         <>
                             {/* Menampilkan tabel hasil jawaban */}
@@ -198,7 +267,6 @@ const App = () => {
                                 </tbody>
                             </table>
                             </div>
-
                             {/* Tombol kembali ke input game */}
                             <button 
                             onClick={() => {
@@ -210,7 +278,6 @@ const App = () => {
                             >
                             Kembali
                             </button>
-
                             {/* Tombol untuk konfirmasi hasil */}
                             <button 
                             onClick={submitAnswers} 
@@ -222,25 +289,37 @@ const App = () => {
                         )}
 
                         {rating && (
-                        <>
-                            <h2 className="text-xl font-semibold mt-4">
-                            Game <span className="font-bold text-blue-500">{gameName}</span> memiliki rating 
-                            <span className="font-bold text-red-500"> {rating}</span>
-                            </h2>
-                            <p className="mt-2"><strong>Penjelasan:</strong> {ratingDescriptions[rating]}</p>
-                            <button 
-                            onClick={() => { 
-                                setStep(0); 
-                                setAnswers([]); 
-                                setRating(null); 
-                                setGameName("");
-                            }} 
-                            className="bg-red-500 text-white px-4 py-2 rounded mt-4 w-full"
-                            >
-                            Coba Lagi
-                            </button>
-                        </>
+                            <>
+                                {easterEggActive ? (
+                                    <h2 className="text-xl font-bold text-center text-red-600 mt-4">
+                                        🎉 BISMILLAH LULUS 2025 DENGAN SEDIKIT REVISI 🎓
+                                    </h2>
+                                ) : (
+                                    <>
+                                        <h2 className="text-xl font-semibold mt-4">
+                                            Game <span className="font-bold text-blue-500">{gameName}</span> memiliki rating 
+                                            <span className="font-bold text-red-500"> {rating}</span>
+                                        </h2>
+                                        <p className="mt-2"><strong>Penjelasan:</strong> {ratingDescriptions[rating]}</p>
+                                    </>
+                                )}
+                                
+                                <button 
+                                    onClick={() => { 
+                                        setStep(0); 
+                                        setAnswers([]); 
+                                        setRating(null); 
+                                        setGameName("");
+                                        setEasterEggActive(false);
+                                        window.location.reload();
+                                    }} 
+                                    className="bg-red-500 text-white px-4 py-2 rounded mt-4 w-full"
+                                >
+                                    Coba Lagi
+                                </button>
+                            </>
                         )}
+
 
                         {/* Pop-up konfirmasi pilihan jawaban */}
                         <PopUp 
@@ -259,9 +338,13 @@ const App = () => {
                         />
                     </div>
                  </div>
+                 <div id="tentang" ref={tentangRef}>
                 <Tentang />
+                </div>
                 <KategoriRating />
-            <Footer />
+                <div id="kontak" ref={kontakRef}>
+                <Footer />
+            </div>
         </div>
     );
 };

@@ -26,22 +26,22 @@ const KategoriRating = () => {
         <div className="absolute inset-0 bg-yellow-500 opacity-85"></div>
 
         {/* Konten utama */}
-        <div className="relative flex w-full h-full items-center justify-between p-10">
+        <div className="relative flex w-full h-full items-center justify-center p-10">
           {/* Teks di sebelah kiri */}
           <div className="w-1/2 pr-5">
-            <p className="text-black text-bold text-3xl">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam eu turpis
-              molestie, dictum est a, mattis tellus. Sed dignissim, metus nec fringilla
-              accumsan, risus sem sollicitudin lacus, ut interdum tellus elit sed risus.
-              Maecenas eget condimentum velit, sit amet feugiat lectusLorem ipsum dolor 
-              sit amet, consectetur adipiscing elit. Etiam eu turpismolestie, dictum est 
-              a, mattis tellus. Sed dignissim, metus nec fringillaaccumsan, risus sem 
-              sollicitudin lacus,ut interdum tellus elit sed risus.amet feugiat
+            <p className="text-black text-bold text-2xl">
+            Dalam Peraturan Menteri Komunikasi dan Informatika Nomor 2 Tahun 2024, 
+            gim diklasifikasikan berdasarkan kelompok usia pengguna: 3+, 7+, 13+, dan 18+. 
+            Setiap kategori ini mempertimbangkan jenis konten yang ditampilkan, seperti kekerasan, 
+            bahasa, unsur horor, hingga interaksi daring. Semakin tinggi kelompok usia, 
+            semakin kompleks pula konten yang diizinkan, namun tetap dalam batasan yang 
+            tidak melanggar norma dan hukum yang berlaku. Klasifikasi ini bertujuan agar 
+            setiap pengguna dapat memainkan gim yang sesuai dengan tingkat kedewasaan mereka, 
+            serta membantu orang tua dalam mengawasi pilihan hiburan digital anak-anaknya.
                
             </p>
           </div>
 
-          {/* Kotak putih sejajar kiri-kanan dengan efek flip */}
           <div className="w-1/2 flex flex-col items-end gap-5 relative">
             <div className="flex gap-5 overflow-hidden w-[500px]">
               {cards.slice(currentIndex, currentIndex + 2).map((card, index) => (

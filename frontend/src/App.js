@@ -149,202 +149,236 @@ const App = () => {
         }
     };
     return (
-        <div>
+        <div className="min-h-screen bg-gray-50">
             <Header scrollToSection={scrollToSection} />
-                <div id="home" ref={homeRef} className="h-screen w-full bg-cover bg-center bg-no-repeat bg-black bg-opacity-50 flex items-center justify-center" 
-                        style={{ backgroundImage: "url('/images/bgwebrating.png')", backgroundSize: "105%" }}>
-                    <div className={`w-full max-w-lg p-6 text-center relative ${step > 0 || rating ? 'bg-white rounded-lg shadow-md' : ''}`}>
-                        {step === 0 && !rating && (
-                            <h1 className="text-6xl text-white text-2xl text-left font-bold ">Rating Umur Game</h1>
-                        )}
-                        {step > 0 && step <= questions.length && (
-                        <div className="absolute top-4 right-4 flex space-x-2">
+            
+            {/* Hero Section */}
+            <div 
+                id="home" 
+                ref={homeRef} 
+                className="min-h-screen w-full bg-cover bg-center bg-no-repeat bg-black bg-opacity-50 flex items-center justify-center px-4 sm:px-6 lg:px-8 relative overflow-hidden" 
+                style={{ 
+                    backgroundImage: "url('/images/bgwebrating.png')",
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                    backgroundRepeat: "no-repeat",
+                    backgroundAttachment: "fixed"
+                }}
+            >
+                <div className="absolute inset-0 bg-black/50"></div>
+                <div className={`w-full max-w-2xl p-6 sm:p-8 text-center relative ${step > 0 || rating ? 'bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl' : ''}`}>
+                    {step === 0 && !rating && (
+                        <h1 className="text-4xl sm:text-5xl md:text-6xl text-white font-bold tracking-tight mb-8">
+                            Rating Umur Game
+                        </h1>
+                    )}
+
+                    {step > 0 && step <= questions.length && (
+                        <div className="absolute top-4 right-4 flex space-x-3 z-10">
                             {step > 1 && (
+                                <button 
+                                    onClick={() => {
+                                        setAnswers(answers.slice(0, -1));
+                                        setStep(step - 1);
+                                    }}
+                                    aria-label="Kembali"
+                                    className="w-8 h-8 bg-yellow-500 rounded-full hover:bg-yellow-600 transition-transform duration-200 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-yellow-300 border-2 border-white shadow-md hover:scale-110"
+                                />
+                            )}
                             <button 
                                 onClick={() => {
-                                setAnswers(answers.slice(0, -1));
-                                setStep(step - 1);
+                                    setStep(0);
+                                    setAnswers([]);
+                                    setGameName("");
                                 }}
-                                className="w-6 h-6 bg-yellow-500 rounded-full hover:bg-yellow-700"
-                            />
-                            )}
-                        
-                            <button 
-                            onClick={() => {
-                                setStep(0);
-                                setAnswers([]);
-                                setGameName("");
-                            }}
-                            className="w-6 h-6 bg-red-500 rounded-full hover:bg-red-700"
+                                aria-label="Reset"
+                                className="w-8 h-8 bg-red-500 rounded-full hover:bg-red-600 transition-transform duration-200 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-red-300 border-2 border-white shadow-md hover:scale-110"
                             />
                         </div>
-                        )}
-                        {!rating && step === 0 && (
-                        <>
-                            <p className="mt-4 text-left text-white">Masukkan nama game:</p>
-                            <input 
-                            type="text" 
-                            value={gameName} 
-                            onChange={(e) => setGameName(e.target.value)} 
-                            className="border border-gray-600 bg-gray-100 p-2 w-full mt-2 focus:bg-gray-200 focus:border-black rounded mt-1"
-                            />
-                            {suggestions.length > 0 && (
-                                <ul className="border border-gray-600 bg-gray-100 w-full mt-2 focus:bg-gray-200 focus:border-black rounded text-left">
-                                    {suggestions.map((suggestion, index) => (
-                                        <li 
-                                            key={index} 
-                                            className="p-2 cursor-pointer hover:bg-gray-300"
-                                            onClick={() => handleSelectGame(suggestion)}
-                                        >
-                                            {suggestion}
-                                        </li>
-                                    ))}
-                                </ul>
-                            )}
+                    )}
+
+                    {!rating && step === 0 && (
+                        <div className="space-y-6">
+                            <p className="text-xl text-white font-medium">Masukkan nama game:</p>
+                            <div className="relative">
+                                <input 
+                                    type="text" 
+                                    value={gameName} 
+                                    onChange={(e) => setGameName(e.target.value)} 
+                                    className="w-full px-4 py-3 rounded-xl border-2 border-gray-300 focus:border-yellow-500 focus:ring-2 focus:ring-yellow-200 transition-all duration-300 bg-white/90 backdrop-blur-sm"
+                                    placeholder="Ketik nama game..."
+                                />
+                                {suggestions.length > 0 && (
+                                    <ul className="absolute w-full mt-2 bg-white rounded-xl shadow-lg border border-gray-200 max-h-60 overflow-y-auto z-[9999]">
+                                        {suggestions.map((suggestion, index) => (
+                                            <li 
+                                                key={index} 
+                                                className="px-4 py-3 hover:bg-yellow-50 cursor-pointer transition-colors duration-200 border-b border-gray-100 last:border-b-0"
+                                                onClick={() => handleSelectGame(suggestion)}
+                                            >
+                                                {suggestion}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                )}
+                            </div>
                             <button 
-                            onClick={checkGame} 
-                            className="bg-blue-500 text-white px-4 py-2 rounded mt-4"
+                                onClick={checkGame} 
+                                className="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-semibold px-6 py-3 rounded-xl transition-all duration-300 transform hover:scale-105 disabled:opacity-60 disabled:cursor-not-allowed"
+                                disabled={!gameName.trim()}
                             >
-                            Cek
+                                Cek Rating
                             </button>
-                           {/* Daftar 5 game terbaru */}
-                           {latestGames.length > 0 && (
-                                <div className="mt-6 px-6 bg-yellowlight  p-2 rounded">
-                                    <h2 className="text-black text-bold text-lg text-left font-semibold mb-2">Game Terbaru:</h2>
-                                    <div className=" flex flex-wrap max-w-full gap-x-6 gap-y-2 ">
+
+                            {latestGames.length > 0 && (
+                                <div className="mt-8 bg-white/10 backdrop-blur-sm rounded-xl p-6">
+                                    <h2 className="text-white text-xl font-semibold mb-4">Game Terbaru:</h2>
+                                    <div className="flex flex-wrap gap-3">
                                         {latestGames.map((game, index) => (
                                             <button 
                                                 key={index} 
-                                                className="text-black text-bold border-b border-gray-400 hover:text-white-300 cursor-pointer text-left whitespace-nowrap"
+                                                className="px-4 py-2 bg-white/20 hover:bg-white/30 text-white rounded-lg transition-all duration-300"
                                                 onClick={() => fetchGameRating(game)}
                                             >
                                                 {game}
                                             </button>
                                         ))}
                                         {latestGames.length >= 4 && (
-                                            <a href="/list-games" className="text-blue-800 hover:underline ml-2">
+                                            <a 
+                                                href="/list-games" 
+                                                className="px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg transition-all duration-300"
+                                            >
                                                 Selengkapnya
                                             </a>
                                         )}
                                     </div>
                                 </div>
                             )}
-                        </>
-                        )}
-                        {!rating && step > 0 && step <= questions.length && (
-                        <>
-                            <p className="mt-4">{questions[step - 1]}</p>
-                            {options.map((option) => (
-                            <button 
-                                key={option} 
-                                onClick={() => handleOptionClick(option)}
-                                className="block bg-gray-300 text-black px-4 py-2 rounded mt-2 hover:bg-gray-400 w-full"
-                            >
-                                {option}
-                            </button>
-                            ))}
-                        </>
-                        )}
-                        {!rating && step > questions.length && (
-                        <>
-                            {/* Menampilkan tabel hasil jawaban */}
-                            <div className="mt-4">
-                            <h2 className="text-lg font-semibold">Hasil Jawaban Anda:</h2>
-                            <table className="table-auto w-full border mt-4">
-                                <thead>
-                                <tr className="bg-gray-200">
-                                    <th className="border px-4 py-2">Pertanyaan</th>
-                                    <th className="border px-4 py-2">Jawaban</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                {questions.map((question, index) => (
-                                    <tr key={index}>
-                                    <td className="border px-4 py-2">{question}</td>
-                                    <td className="border px-4 py-2">{answers[index]}</td>
-                                    </tr>
-                                ))}
-                                </tbody>
-                            </table>
-                            </div>
-                            {/* Tombol kembali ke input game */}
-                            <button 
-                            onClick={() => {
-                                setStep(0);
-                                setAnswers([]);
-                                setGameName("");
-                            }}
-                            className="bg-red-500 text-white px-4 py-2 rounded mt-4 w-full"
-                            >
-                            Kembali
-                            </button>
-                            {/* Tombol untuk konfirmasi hasil */}
-                            <button 
-                            onClick={submitAnswers} 
-                            className="bg-green-500 text-white px-4 py-2 rounded mt-4 w-full"
-                            >
-                            Cek Hasil
-                            </button>
-                        </>
-                        )}
+                        </div>
+                    )}
 
-                        {rating && (
-                            <>
-                                {easterEggActive ? (
-                                    <h2 className="text-xl font-bold text-center text-red-600 mt-4">
+                    {!rating && step > 0 && step <= questions.length && (
+                        <div className="space-y-6 pt-8">
+                            <h2 className="text-2xl font-semibold text-gray-800 mb-6">
+                                {questions[step - 1]}
+                            </h2>
+                            <div className="grid gap-3">
+                                {options.map((option) => (
+                                    <button 
+                                        key={option} 
+                                        onClick={() => handleOptionClick(option)}
+                                        className="w-full px-6 py-4 bg-white hover:bg-yellow-50 text-gray-800 rounded-xl border-2 border-gray-200 hover:border-yellow-500 transition-all duration-300 text-left"
+                                    >
+                                        {option}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
+                    {!rating && step > questions.length && (
+                        <div className="space-y-6">
+                            <h2 className="text-2xl font-semibold text-gray-800 mb-6">Hasil Jawaban Anda:</h2>
+                            <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+                                <table className="w-full">
+                                    <thead>
+                                        <tr className="bg-gray-50">
+                                            <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">Pertanyaan</th>
+                                            <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">Jawaban</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-gray-200">
+                                        {questions.map((question, index) => (
+                                            <tr key={index} className="hover:bg-gray-50">
+                                                <td className="px-6 py-4 text-sm text-gray-800">{question}</td>
+                                                <td className="px-6 py-4 text-sm text-gray-800">{answers[index]}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div className="flex gap-4">
+                                <button 
+                                    onClick={() => {
+                                        setStep(0);
+                                        setAnswers([]);
+                                        setGameName("");
+                                    }}
+                                    className="flex-1 bg-red-500 hover:bg-red-600 text-white font-semibold px-6 py-3 rounded-xl transition-all duration-300"
+                                >
+                                    Kembali
+                                </button>
+                                <button 
+                                    onClick={submitAnswers} 
+                                    className="flex-1 bg-green-500 hover:bg-green-600 text-white font-semibold px-6 py-3 rounded-xl transition-all duration-300"
+                                >
+                                    Cek Hasil
+                                </button>
+                            </div>
+                        </div>
+                    )}
+
+                    {rating && (
+                        <div className="space-y-6">
+                            {easterEggActive ? (
+                                <div className="text-center">
+                                    <h2 className="text-3xl font-bold text-red-600 mb-4">
                                         🎉 BISMILLAH LULUS 2025 DENGAN SEDIKIT REVISI 🎓
                                     </h2>
-                                ) : (
-                                    <>
-                                        <h2 className="text-xl font-semibold mt-4">
-                                            Game <span className="font-bold text-blue-500">{gameName}</span> memiliki rating 
-                                            <span className="font-bold text-red-500"> {rating}</span>
-                                        </h2>
-                                        <p className="mt-2"><strong>Penjelasan:</strong> {ratingDescriptions[rating]}</p>
-                                    </>
-                                )}
-                                
-                                <button 
-                                    onClick={() => { 
-                                        setStep(0); 
-                                        setAnswers([]); 
-                                        setRating(null); 
-                                        setGameName("");
-                                        setEasterEggActive(false);
-                                        window.location.reload();
-                                    }} 
-                                    className="bg-red-500 text-white px-4 py-2 rounded mt-4 w-full"
-                                >
-                                    Coba Lagi
-                                </button>
-                            </>
-                        )}
-
-
-                        {/* Pop-up konfirmasi pilihan jawaban */}
-                        <PopUp 
-                        isOpen={isPopUpOpen} 
-                        onClose={() => setIsPopUpOpen(false)} 
-                        onConfirm={confirmSelection} 
-                        selectedOption={selectedOption} 
-                        />
-
-                        {/* Pop-up konfirmasi cek hasil */}
-                        <PopUp 
-                        isOpen={isConfirmPopupOpen} 
-                        onClose={() => setIsConfirmPopupOpen(false)} 
-                        onConfirm={confirmSubmit} 
-                        selectedOption="Apakah Anda yakin ingin melihat hasil rating?"
-                        />
-                    </div>
-                 </div>
-                 <div id="tentang" ref={tentangRef}>
-                <Tentang />
+                                </div>
+                            ) : (
+                                <div className="text-center">
+                                    <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+                                        Game <span className="font-bold text-blue-600">{gameName}</span> memiliki rating 
+                                        <span className="font-bold text-red-600"> {rating}</span>
+                                    </h2>
+                                    <p className="text-gray-600 mb-6">
+                                        <strong>Penjelasan:</strong> {ratingDescriptions[rating]}
+                                    </p>
+                                </div>
+                            )}
+                            <button 
+                                onClick={() => { 
+                                    setStep(0); 
+                                    setAnswers([]); 
+                                    setRating(null); 
+                                    setGameName("");
+                                    setEasterEggActive(false);
+                                    window.location.reload();
+                                }} 
+                                className="w-full bg-red-500 hover:bg-red-600 text-white font-semibold px-6 py-3 rounded-xl transition-all duration-300"
+                            >
+                                Coba Lagi
+                            </button>
+                        </div>
+                    )}
                 </div>
-                <KategoriRating />
-                <div id="kontak" ref={kontakRef}>
+            </div>
+
+            <div id="tentang" ref={tentangRef}>
+                <Tentang />
+            </div>
+            
+            <KategoriRating />
+            
+            <div id="kontak" ref={kontakRef}>
                 <Footer />
             </div>
+
+            {/* Pop-ups */}
+            <PopUp 
+                isOpen={isPopUpOpen} 
+                onClose={() => setIsPopUpOpen(false)} 
+                onConfirm={confirmSelection} 
+                selectedOption={selectedOption} 
+            />
+
+            <PopUp 
+                isOpen={isConfirmPopupOpen} 
+                onClose={() => setIsConfirmPopupOpen(false)} 
+                onConfirm={confirmSubmit} 
+                selectedOption="Apakah Anda yakin ingin melihat hasil rating?"
+            />
         </div>
     );
 };
